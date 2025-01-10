@@ -1,0 +1,20 @@
+{
+    "name": "barterx",
+    "version": "0.0.1",
+    "description": "Online Web Store",
+    "main": "index.js",
+    "type":"module",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/ItsJESH/BarterX.git"
+    },
+    "author": "Jenish",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/ItsJESH/BarterX/issues"
+    },
+    "homepage": "https://github.com/ItsJESH/BarterX#readme"
+  }
