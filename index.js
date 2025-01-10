@@ -1,78 +1,65 @@
-import http from 'http';
-import fs from 'fs';
-
-// Starting port
-let port = 8050;
-
+import http from "http"; 
 const server = http.createServer((req, res) => {
-    // Log request details to a file
-    fs.appendFileSync(
-        './log.txt',
-        `GET Request from ${req.url} by ${req.method} Method at ${new Date().toISOString()}\n`
-    );
-
-    let uri = req.url;
-    switch (uri) {
-        case '/':
-            res.write("Welcome to the BarterX");
-            break;
-        case '/products':
-            res.write("Here are the products up for Sale in BarterX");
-            break;
-        case '/login':
-            res.write("Login to the BarterX");
-            break;
-        case '/signup':
-            res.write("Sign up to the BarterX");
-            break;
-        case '/profile':
-            res.write("Trader Profile");
-            break;
-        case '/cart':
-            res.write("Your Shopping Cart is here");
-            break;
-        case '/checkout':
-            res.write("Let's start shipping");
-            break;
-        case '/orders':
-            res.write("Your Orders are here");
-            break;
-        case '/categories':
-            res.write("Browse Categories");
-            break;
-        case '/chat':
-            res.write("Your Chat with fellow Traders");
-            break;
-        case '/contact':
-            res.write("Contact Us at");
-            break;
-        case '/about':
-            res.write("The modern approach to trading our commodities");
-            break;
-        default:
-            res.writeHead(404, { 'Content-Type': 'application/json' });
-            res.write(JSON.stringify({ error: "Page not found", statusCode: 404 }));
-            break;
-    }
-
-    res.end();
-});
-
-const startServer = () => {
-    server.listen(port, () => {
-        console.log(`Server initiated on port ${port}...`);
-        console.log(`http://localhost:${port}/`);
-    });
-};
-
-server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-        console.error(`Port ${port} is in use. Trying another port...`);
-        port++;
-        startServer();
+    if (req.url === "/") {
+        res.write("Welcome to the BarterX");
+        res.end();
+    } else if (req.url === "/api/products") {
+        res.writeHead(200, {"Content-Type": "application/json"});
+        let payload = [
+            { "id": 1, "name": "Used Laptop", "price": 300 },
+            { "id": 2, "name": "Second-hand Bicycle", "price": 50 }
+        ]
+        res.write(JSON.stringify(payload));
+        res.end();
+    } else if (req.url === "/login") {
+        const menu_info = "Login to the BarterX";
+        res.write(menu_info);
+        res.end();
+    } else if (req.url === "/signup") {
+        const contact_info = "Sign up to the BarterX";
+        res.write(contact_info);
+        res.end();
+    } else if (req.url === "/profile") {
+        const contact_info = "Trader Profile";
+        res.write(contact_info);
+        res.end();
+    } else if (req.url === "/cart") {
+        const contact_info = "Your Shopping Cart is here";
+        res.write(contact_info);
+        res.end();
+    } else if (req.url === "/checkout") {
+        const contact_info = "Let's start shipping";
+        res.write(contact_info);
+        res.end();
+    } else if (req.url === "/orders") {
+        const contact_info = "Your Orders are here";
+        res.write(contact_info);
+        res.end();
+    } else if (req.url === "/categories") {
+        const contact_info = "Browse Categories";
+        res.write(contact_info);
+        res.end();
+    } else if (req.url === "/chat") {
+        const contact_info = "Your Chat with fellow Traders";
+        res.write(contact_info);
+        res.end();
+    } else if (req.url === "/contact") {
+        const contact_info = "Contact Us at";
+        res.write(contact_info);
+        res.end();
+    } else if (req.url === "/chat") {
+        const contact_info = "Your Chat with fellow Traders";
+        res.write(contact_info);
+        res.end();
     } else {
-        console.error(err);
+        res.writeHead(404, {"Content-Type": "application/json"});
+        res.end(JSON.stringify({
+            "error": "Page not found",
+            "statusCode": 404
+        }));
     }
 });
-
-startServer();
+let PORT = 8050;
+server.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
