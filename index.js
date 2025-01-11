@@ -1,93 +1,77 @@
-import http from "http";
-import fs from "fs";
-import path from "path";
-const server = http.createServer((req, res) => {
-    const logMessage = `[${new Date().toISOString()}] ${req.method} ${req.url}\n`;
-    fs.appendFile("log.txt", logMessage, () => {});
+const fs = require('fs');
 
-    if (req.url === "/") {
-        res.writeHead(200, { "Content-Type": "text/plain" });
-        res.end("Welcome to the BarterX");
-    } else if (req.url === "/api/products") {
-        res.writeHead(200, { "Content-Type": "application/json" });
-        const products = [
-            { id: 1, name: "Used Laptop", price: 300 },
-            { id: 2, name: "Second-hand Bicycle", price: 50 },
+const server = Bun.serve({
+  port: 8050,
+  fetch(req) {
+    const url = new URL(req.url);
+    const method = req.method;  
+    const timestamp = new Date().toISOString(); 
+    const logMessage = `[${timestamp}] ${method} ${url.pathname}\n`;
+    fs.appendFileSync("log.txt", logMessage);
+
+    switch (url.pathname) {
+      case "/":
+        return new Response("Welcome to BarterX");
+
+      case "/products":
+        return new Response("Here are the products up for sale in BarterX");
+
+      case "/login":
+        return new Response("Login to BarterX");
+
+      case "/signup":
+        return new Response("Sign up to BarterX");
+
+      case "/profile":
+        return new Response("Trader Profile");
+
+      case "/cart":
+        return new Response("Your Shopping Cart is here");
+
+      case "/checkout":
+        return new Response("Let's start shipping");
+
+      case "/orders":
+        return new Response("Your Orders are here");
+
+      case "/api/products":
+        const apiData = [
+          { id: 1, name: "Used Laptop", price: 300 },
+          { id: 2, name: "Second-hand Bicycle", price: 50 },
         ];
-        res.end(JSON.stringify(products));
-    } else if (req.url === "/login") {
-        const menu_info = "Login to the BarterX";
-        res.write(menu_info);
-        res.end();
-    } else if (req.url === "/signup") {
-        const contact_info = "Sign up to the BarterX";
-        res.write(contact_info);
-        res.end();
-    } else if (req.url === "/profile") {
-        const contact_info = "Trader Profile";
-        res.write(contact_info);
-        res.end();
-    } else if (req.url === "/cart") {
-        const contact_info = "Your Shopping Cart is here";
-        res.write(contact_info);
-        res.end();
-    } else if (req.url === "/checkout") {
-        const contact_info = "Let's start shipping";
-        res.write(contact_info);
-        res.end();
-    } else if (req.url === "/orders") {
-        const contact_info = "Your Orders are here";
-        res.write(contact_info);
-        res.end();
-    } else if (req.url === "/categories") {
-        const contact_info = "Browse Categories";
-        res.write(contact_info);
-        res.end();
-    } else if (req.url === "/contact") {
-        const contact_info = "Contact Us at";
-        res.write(contact_info);
-        res.end();
-    }else if (req.url === "/chat") {
-        res.writeHead(200, { "Content-Type": "text/plain" });
-        res.end("Your Chat with fellow Traders");
-    } else if (req.url === "/contact") {
-        const contact_info = "Your Chat with fellow Traders";
-        res.write(contact_info);
-        res.end();
-    } else if (req.url === "/about") {
-        const aboutPage = `
-            <!DOCTYPE html>
-            <html>
-            <head><link rel="stylesheet" href="/styles.css"></head>
-            <body>
-                <h1>About BarterX</h1>
-                <p>The modern approach to trading our commodities.</p>
-                <img src="/logo.png" alt="BarterX Logo">
-            </body>
-            </html>`;
-        res.writeHead(200, { "Content-Type": "text/html" });
-        res.end(aboutPage);
-    } else if (req.url === "/logo.png") {
-        fs.readFile(path.join("public", "logo.png"), (err, data) => {
-            if (err) {
-                res.writeHead(404);
-                res.end("Logo not found");
-            } else {
-                res.writeHead(200, { "Content-Type": "image/png" });
-                res.end(data);
-            }
+        return new Response(JSON.stringify(apiData), {
+          headers: { "Content-Type": "application/json" },
         });
-    } else {
-        res.writeHead(404, { "Content-Type": "application/json" });
-        res.end(
-            JSON.stringify({
-                error: "Page not found",
-                statusCode: 404,
-            })
+
+      case "/categories":
+        return new Response("Browse Categories");
+
+      case "/chat":
+        return new Response("Your Chat with fellow Traders");
+
+      case "/contact":
+        return new Response("Contact Us at");
+
+      case "/about":
+        return new Response(Bun.file("./public/about.html"), {
+          headers: { "Content-Type": "text/html" },
+        });
+
+      case "/styles":
+        return new Response(Bun.file("./public/style.css"), {
+          headers: { "Content-Type": "text/css" },
+        });
+
+      default:
+        return Response.json(
+          { error: "Page not found", statusCode: 404 },
+          {
+            status: 404,
+            headers: { "Content-Type": "application/json" },
+          }
         );
     }
+  },
 });
-let PORT = 8050;
-server.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+
+console.log(`Server is running at  http://localhost:${server.port}`);
